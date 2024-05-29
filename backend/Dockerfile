@@ -20,4 +20,4 @@ EXPOSE 5000
 ENV FLASK_APP=app.py
 
 # Command to run the Flask app
-CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["flask", "run", "--host=0.0.0.0","--reload"]
