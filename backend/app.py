@@ -12,8 +12,7 @@ app = Flask(__name__)
 CORS(app)
 
 # MongoDB setup
-mongo_uri = os.getenv('MONGO_URI')
-client = MongoClient(mongo_uri)
+client = MongoClient(MONGO_URI)
 db = client['FrancesinhasWikiDB']
 francesinhas_collection = db['francesinhas']
 restaurants_collection = db['restaurants']
