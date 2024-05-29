@@ -11,7 +11,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - MONGO_URI=${MONGO_URI}
+      - MONGO_URI=mongodb+srv://simaosousa16:kZiFb8yDGj2sM8V9@francesinhaswikidb.is06k0l.mongodb.net/?retryWrites=true&w=majority&appName=FrancesinhasWikiDB
 
   mongo:
     image: mongo:4.4
@@ -22,3 +22,5 @@ services:
 
 volumes:
   mongo-data:
+
+

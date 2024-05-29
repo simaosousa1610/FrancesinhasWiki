@@ -6,13 +6,14 @@ from flask_cors import CORS
 import os
 import cerberus
 
-# Load environment variables
-load_dotenv()
+
 app = Flask(__name__)
 CORS(app)
 
 # MongoDB setup
-client = MongoClient(MONGO_URI)
+mongo_uri = os.getenv('MONGO_URI')
+client = MongoClient(mongo_uri)
+
 db = client['FrancesinhasWikiDB']
 francesinhas_collection = db['francesinhas']
 restaurants_collection = db['restaurants']
