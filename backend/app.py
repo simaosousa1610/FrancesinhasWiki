@@ -71,13 +71,16 @@ def create_francesinha():
 
     try:
         if francesinhas_collection.find_one({"name": data['name']}):
+            print("Francesinha with this name already exists")
             return jsonify({"error": "Francesinha with this name already exists"}), 400
 
         for ingredient in data['ingredients']:
             if not ingredients_collection.find_one({"name": ingredient}):
+                print(f"Ingredient '{ingredient}' not found")
                 return jsonify({"error": f"Ingredient '{ingredient}' not found"}), 400
 
         if not restaurants_collection.find_one({"name": data['restaurant']}):
+            print(f"Restaurant '{data['restaurant']}' not found")
             return jsonify({"error": f"Restaurant '{data['restaurant']}' not found"}), 400
 
         data['deleted'] = False

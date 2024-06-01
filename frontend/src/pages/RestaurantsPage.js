@@ -42,10 +42,21 @@ const RestaurantsPage = () => {
     setMessage('');
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/restaurants/${id}`);
+      fetchRestaurants();
+      setMessage('Restaurant deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting restaurant:', error);
+      setMessage('Error deleting restaurant.');
+    }
+  };
+
   return (
     <div>
       <h2>Restaurants</h2>
-      <RestaurantList restaurants={restaurants} />
+      <RestaurantList restaurants={restaurants} onDelete={handleDelete} />
       <RestaurantForm
         newRestaurant={newRestaurant}
         handleInputChange={handleInputChange}
