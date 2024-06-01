@@ -1,0 +1,61 @@
+.list-container {
+    padding: 20px;
+  }
+  
+  .search-input {
+    margin-bottom: 20px;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .sort-buttons {
+    margin-bottom: 20px;
+  }
+  
+  .sort-button {
+    margin-right: 10px;
+    padding: 10px;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    box-sizing: border-box;
+    
+  }
+  
+  .image {
+    width: 100%;
+    border-radius: 8px;
+  }
+  
+  .file-input {
+    margin-bottom: 10px;
+  }
+  
+  .name {
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .price, .rating, .address  {
+    margin-bottom: 10px;
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .action-button {
+    padding: 10px;
+  }
+  

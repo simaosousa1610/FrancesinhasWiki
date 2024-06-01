@@ -1,10 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from pymongo import MongoClient, errors
 from bson.objectid import ObjectId
 from dotenv import load_dotenv
 from flask_cors import CORS
 import os
 import cerberus
+import gridfs
+from io import BytesIO
 
 
 app = Flask(__name__)
@@ -18,6 +20,7 @@ db = client['FrancesinhasWikiDB']
 francesinhas_collection = db['francesinhas']
 restaurants_collection = db['restaurants']
 ingredients_collection = db['ingredients']
+fs = gridfs.GridFS(db)
 
 # Data validation schemas
 francesinha_schema = {
@@ -25,7 +28,8 @@ francesinha_schema = {
     'price': {'type': 'float', 'required': True, 'min': 0},
     'rating': {'type': 'float', 'required': True, 'min': 1, 'max': 5},
     'ingredients': {'type': 'list', 'required': True},
-    'restaurant': {'type': 'string', 'required': True}
+    'restaurant': {'type': 'string', 'required': True},
+    'image_id': {'type': 'string', 'required': False},
 }
 
 restaurant_schema = {
@@ -54,13 +58,18 @@ def preprocess_data(data, schema):
 
 @app.route('/francesinhas', methods=['POST'])
 def create_francesinha():
-    data = request.get_json()
+    data = request.form.to_dict()
+    data['ingredients'] = request.form.getlist('ingredients')
+    if 'image' in request.files:
+        image = request.files['image']
+        image_id = fs.put(image, filename=image.filename)
+        data['image_id'] = str(image_id)
     data = preprocess_data(data, francesinha_schema)
     if not v.validate(data, francesinha_schema):
+        print("Validation Errors:", v.errors)
         return jsonify({"error": v.errors}), 400
 
     try:
-        # Check for duplicate name
         if francesinhas_collection.find_one({"name": data['name']}):
             return jsonify({"error": "Francesinha with this name already exists"}), 400
 
@@ -75,6 +84,17 @@ def create_francesinha():
         result = francesinhas_collection.insert_one(data)
         return jsonify({'_id': str(result.inserted_id)}), 201
     except errors.PyMongoError as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/francesinhas/<id>/image', methods=['GET'])
+def get_francesinha_image(id):
+    try:
+        francesinha = francesinhas_collection.find_one({"_id": ObjectId(id)})
+        if not francesinha or 'image_id' not in francesinha:
+            return jsonify({"error": "Image not found"}), 404
+        image = fs.get(ObjectId(francesinha['image_id']))
+        return send_file(BytesIO(image.read()), mimetype='image/jpeg', download_name=image.filename)
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 @app.route('/restaurants', methods=['POST'])
